@@ -13,14 +13,18 @@ RUN mkdir /usr/share/doxygen
 WORKDIR /usr/share/doxygen
 
 #https://geant4-data.web.cern.ch/releases/geant4.10.07.p02.tar.gz
-RUN wget -q https://geant4-data.web.cern.ch/releases/geant4.${G4_VERSION}.tar.gz;\
-    tar -xvf geant4.${G4_VERSION}.tar.gz -C /usr/share/doxygen;\
-    rm geant4.${G4_VERSION}.tar.gz;
-
 RUN git clone https://github.com/Isaac-Kwon/docker-geant4-reference.git .;\
     echo "PROJECT_NUMBER = ${G4_VERSION}" >> Doxyfile ;\
-    echo "EXAMPLE_PATH   = /usr/share/geant4.${G4_VERSION}/examples" >> Doxyfile ;\
-    echo "INPUT          = /usr/share/geant4.${G4_VERSION}/source" >> Doxyfile ;\
-    doxygen Doxyfile;
+    echo "INPUT          = /geant4.${G4_VERSION}/source" >> Doxyfile ;\
+    echo "EXAMPLE_PATH   = /geant4.${G4_VERSION}/examples" >> Doxyfile ;
+
+WORKDIR /
+
+RUN wget -q https://geant4-data.web.cern.ch/releases/geant4.${G4_VERSION}.tar.gz;\
+    tar -xvf geant4.${G4_VERSION}.tar.gz;\
+    rm geant4.${G4_VERSION}.tar.gz;
+
+RUN doxygen /usr/share/doxygen/Doxyfile;
+
 
 WORKDIR /usr/share/nginx 
